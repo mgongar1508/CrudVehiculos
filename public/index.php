@@ -2,7 +2,6 @@
 <?php
 session_start();
 
-use App\Bbdd\Usuario;
 use App\Utils\Validacion;
 
 require __DIR__."/../vendor/autoload.php";
