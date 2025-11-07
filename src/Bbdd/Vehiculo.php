@@ -26,7 +26,7 @@ class Vehiculo extends Conexion{
     }
 
     public static function read(?int $id=null){
-        $q = $id ==null ? "select * from vehiculo" : "select * from vehiculos where id=:i";
+        $q = $id ==null ? "select * from vehiculo order by id desc" : "select * from vehiculos where id=:i";
         $parametros = $id==null ? [] : [':i'=>$id];
         $stmt = self::executeQuery($q, $parametros, true);
         return $stmt->fetchAll(PDO::FETCH_OBJ);

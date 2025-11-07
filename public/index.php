@@ -41,7 +41,7 @@ if(isset($_POST['email'])){
     <h3 class="text-center text-xl font-bold mb-2">Login</h3>
 
     <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
-        <form method="POST" action="index.php">
+        <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>">
             <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
 
             <!-- Campo de Email -->

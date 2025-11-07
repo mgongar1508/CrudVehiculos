@@ -8,7 +8,7 @@ class Validacion{
         return htmlspecialchars(trim($str));
     }
 
-    public static function longitudCampoValida(string $str, string $campo, int $min, int $max): bool{
+    public static function longitudCampoValida(string|float $str, string $campo, int|float $min, int|float $max): bool{
         if(strlen($str) < $min || strlen($str) > $max){
             $_SESSION["err_".$campo] = "*** error el campo $campo esperaba entre $min y $max de longitud";
             return false;
@@ -16,23 +16,31 @@ class Validacion{
         return true;
     }
 
-
-    public static function pintarErr(string $err){
+    public static function pintarErr(string $err): void{
         if(isset($_SESSION[$err])){
             echo "<p class='text-red-500 italic text-sm'>{$_SESSION[$err]}</p>";
             unset($_SESSION[$err]);
         }
     }
 
-    public static function emailValido(string $email){
+    public static function emailValido(string $email): bool{
         if(filter_var($email, FILTER_VALIDATE_EMAIL)) return true;
         $_SESSION["err_email"] = "*** EMAIL no valido";
         return false;
     }
 
-    public static function isLoginValido(string $email, string $password){
+    public static function isLoginValido(string $email, string $password): bool{
         if(!Usuario::validarUsuario($email, $password)){
             $_SESSION["err_validacion"] = "Login no valido, email o password incorrecto";
+            return false;
+        }
+        return true;
+    }
+
+    public static function esTipoValido(string $tipo): bool{
+        $validos = ['Coche', 'Moto', 'Camión', 'Furgoneta', 'Otro'];
+        if(!in_array($tipo, $validos)){
+            $_SESSION["err_tipo"] = "El tipo no es valido";
             return false;
         }
         return true;

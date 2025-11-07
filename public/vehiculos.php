@@ -25,14 +25,28 @@ $vehiculos = Vehiculo::read();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- CDn SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Productos</title>
+    <title>Vehiculos</title>
 </head>
 
 <body class="bg-blue-200">
+    <h3 class="text-center text-xl font-bold mt-2">Lista de Vehiculos</h3>
     <div class="relative overflow-x-auto p-8">
+        <div class="inline-flex items-center border border-gray-300 rounded-lg px-3 bg-gray-50">
+            <i class="fa-solid fa-user text-gray-400 mr-2"></i>
+            <input
+                type="text"
+                readonly
+                value="<?= $_SESSION['email'] ?>"
+                class="bg-transparent text-gray-700 text-sm focus:outline-none cursor-default" />
+        </div>
+
+
         <div class="flex flex-row-reverse mb-2">
             <a href="nuevo.php" class="p-2 rounded-xl text-white bg-green-500 hover:bg-green-700">
                 <i class="fas fa-add mr-1"></i>NUEVO
+            </a>
+            <a href="cerrar.php" class="p-2 rounded-xl text-white bg-red-500 hover:bg-red-700 mr-2">
+                Cerrar sesion
             </a>
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -59,51 +73,51 @@ $vehiculos = Vehiculo::read();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($vehiculos as $item):
-                $id_usuario = Usuario::devolverId($email)[0]; 
-                $colorFilaUsuario=($item->usuario_id==$id_usuario) ? "bg-green-200" : "bg-gray-800";
-                
+                <?php foreach ($vehiculos as $item):
+                    $id_usuario = Usuario::devolverId($email)[0];
+                    $colorFilaUsuario = ($item->usuario_id == $id_usuario) ? "bg-orange-200" : "bg-gray-800";
+
                 ?>
-                
-                <tr class="<?= $colorFilaUsuario; ?> border-b dark:border-gray-700 border-gray-200">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <?= $item->marca ?>
-                    </th>
-                    <td class="px-6 py-4">
-                        <?= $item->modelo ?>
-                    </td>
-                    <td class="px-6 py-4">
-                        <?= $item->tipo ?>
-                    </td>
-                    <td class="px-6 py-4">
-                        <?= $item->precio ?>
-                    </td>
-                    <td class="px-6 py-4">
-                        <?= $item->descripcion ?>
-                    </td>
-                    <td class="px-6 py-4">
-                        <?php if($item->usuario_id==$id_usuario): ?>
-                        <form method="POST" action="borrar.php">  
-                            <input type="hidden" name="id" value="<?$item->id?>">
-                            <button type="submit">
-                                <i class="fas fa-trash text-red-600"></i>
-                            </button>
-                            <a href="update.php?id=<?= $item->id?>"> 
-                                <i class="fas fa-edit text-orange-500 mr-2"></i>
-                            </a>
-                        </form>
-                        <?php else: ?>
-                            No Disponible
-                        <?php endif; ?> 
-                    </td>
-                </tr>
+
+                    <tr class="<?= $colorFilaUsuario; ?> border-b dark:border-gray-700 border-gray-200">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <?= $item->marca ?>
+                        </th>
+                        <td class="px-6 py-4">
+                            <?= $item->modelo ?>
+                        </td>
+                        <td class="px-6 py-4">
+                            <?= $item->tipo ?>
+                        </td>
+                        <td class="px-6 py-4">
+                            <?= $item->precio ?>
+                        </td>
+                        <td class="px-6 py-4">
+                            <?= $item->descripcion ?>
+                        </td>
+                        <td class="px-6 py-4">
+                            <?php if ($item->usuario_id == $id_usuario): ?>
+                                <form method="POST" action="borrar.php">
+                                    <input type="hidden" name="id" value="<? $item->id ?>">
+                                    <button type="submit">
+                                        <i class="fas fa-trash text-red-600"></i>
+                                    </button>
+                                    <a href="update.php?id=<?= $item->id ?>">
+                                        <i class="fas fa-edit text-purple-500 mr-2"></i>
+                                    </a>
+                                </form>
+                            <?php else: ?>
+                                No Disponible
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <?php 
-        if(isset($_SESSION['mensaje'])){
-            echo <<< TXT
+    <?php
+    if (isset($_SESSION['mensaje'])) {
+        echo <<< TXT
             <script>
                 Swal.fire({
                 icon: "success",
@@ -113,8 +127,8 @@ $vehiculos = Vehiculo::read();
                 });
             </script>
             TXT;
-            unset($_SESSION['mensaje']);
-        }
+        unset($_SESSION['mensaje']);
+    }
     ?>
 
 </body>
