@@ -2,6 +2,7 @@
 namespace App\Bbdd;
 
 use Exception;
+use PDO;
 use PDOException;
 
 class Vehiculo extends Conexion{
@@ -24,8 +25,15 @@ class Vehiculo extends Conexion{
         if($devolverAlgo) return $stmt;
     }
 
+    public static function read(?int $id=null){
+        $q = $id ==null ? "select * from vehiculo" : "select * from vehiculos where id=:i";
+        $parametros = $id==null ? [] : [':i'=>$id];
+        $stmt = self::executeQuery($q, $parametros, true);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function create(){
-        $q = "insert into vehiculos(marca, modelo, tipo, precio, descripcion, usuario_id) values(:ma, :mo, :t, :p, :d, :u)";
+        $q = "insert into vehiculo(marca, modelo, tipo, precio, descripcion, usuario_id) values(:ma, :mo, :t, :p, :d, :u)";
         self::executeQuery($q, [':ma'=>$this->marca, ':mo'=>$this->modelo, ':t'=>$this->tipo, ':p'=>$this->precio, 
         ':d'=>$this->descripcion, ':u'=>$this->usuario_id,], false);
     }
@@ -35,7 +43,7 @@ class Vehiculo extends Conexion{
         $ids = Usuario::devolverId();
         for($i=0;$i<$cantidad;$i++){
             $marca = $faker->company();
-            $modelo = $faker->words();
+            $modelo = $faker->sentence();
             $tipo = $faker->randomElement(['Coche', 'Moto', 'Camión', 'Furgoneta', 'Otro']);
             $precio = $faker->randomFloat(2, 0, 999999.99);
             $descripcion = $faker->sentence(mt_rand(8, 15));
@@ -53,7 +61,7 @@ class Vehiculo extends Conexion{
     }
 
     public static function deleteAll(){
-        $q = "delete from vehiculos";
+        $q = "delete from vehiculo";
         self::executeQuery($q, []);
     }
 

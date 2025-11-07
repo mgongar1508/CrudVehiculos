@@ -20,7 +20,7 @@ if(isset($_POST['email'])){
     }
     //no errores, login exitoso
     $_SESSION['email'] = $email;
-    header("Location:productos.php");
+    header("Location:vehiculos.php");
 }
 ?>
 <html lang="es">

@@ -22,7 +22,7 @@ class Usuario extends Conexion{
     }
 
     public function create(){
-        $q = "insert into usuarios(email, password) values(:e, :p)";
+        $q = "insert into usuario(email, password) values(:e, :p)";
         self::executeQuery($q, [':e'=>$this->email, ':p'=>$this->password], false);
     }
 
@@ -40,7 +40,7 @@ class Usuario extends Conexion{
     }
 
     public static function devolverId(?string $email = null){
-        $q = $email == null ? "select id from usuarios" : "select id from usuarios where email=:e";
+        $q = $email == null ? "select id from usuario" : "select id from usuario where email=:e";
         $opciones = $email == null? [] : [":e"=>$email];
         $stmt = self::executeQuery($q, $opciones, true);
         $datos = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -52,7 +52,7 @@ class Usuario extends Conexion{
     }
 
     public static function validarUsuario(string $email, string $password){
-        $q = "select password from usuarios where email=:e";
+        $q = "select password from usuario where email=:e";
         $stmt = self::executeQuery($q, [':e'=>$email], true);
         $p = $stmt->fetch(PDO::FETCH_OBJ);
         return ($p && password_verify($password, $p->password));
@@ -60,7 +60,7 @@ class Usuario extends Conexion{
     }
 
     public static function deleteAll(){
-        $q = "delete from usuarios";
+        $q = "delete from usuario";
         self::executeQuery($q);
     }
 
