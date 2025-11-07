@@ -16,7 +16,8 @@ $email = $_SESSION['email'];
 if(isset($_POST['marca'])){
     $marca = Validacion::sanearCadena($_POST['marca']);
     $modelo = Validacion::sanearCadena($_POST['modelo']);
-    $tipo = Validacion::sanearCadena($_POST['tipo']);
+    $tipo = $_POST['tipo'] ?? "error";
+    $tipo = Validacion::sanearCadena($tipo);
     $precio = Validacion::sanearCadena($_POST['precio']);
     $precio = (float) $precio;
     $descripcion = Validacion::sanearCadena($_POST['descripcion']);
