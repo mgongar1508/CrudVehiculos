@@ -14,7 +14,7 @@ class Usuario extends Conexion{
         $stmt = self::getConexion() -> prepare($q);
 
         try{
-           count($opciones) ? $stmt->execute($opciones) : $stmt->execute();
+           $stmt->execute($opciones);
         }catch(PDOException $e){
             throw new Exception("Error en query ". $e->getMessage());
         }

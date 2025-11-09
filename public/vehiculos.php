@@ -98,7 +98,7 @@ $vehiculos = Vehiculo::read();
                         <td class="px-6 py-4">
                             <?php if ($item->usuario_id == $id_usuario): ?>
                                 <form method="POST" action="borrar.php">
-                                    <input type="hidden" name="id" value="<? $item->id ?>">
+                                    <input type="hidden" name="id" value="<?= $item->id ?>">
                                     <button type="submit">
                                         <i class="fas fa-trash text-red-600"></i>
                                     </button>

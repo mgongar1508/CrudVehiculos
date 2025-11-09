@@ -18,7 +18,7 @@ class Vehiculo extends Conexion{
         $stmt = self::getConexion() -> prepare($q);
 
         try{
-           count($opciones) ? $stmt->execute($opciones) : $stmt->execute();
+           $stmt->execute($opciones);
         }catch(PDOException $e){
             throw new Exception("Error en query ". $e->getMessage());
         }
@@ -36,6 +36,13 @@ class Vehiculo extends Conexion{
         $q = "insert into vehiculo(marca, modelo, tipo, precio, descripcion, usuario_id) values(:ma, :mo, :t, :p, :d, :u)";
         self::executeQuery($q, [':ma'=>$this->marca, ':mo'=>$this->modelo, ':t'=>$this->tipo, ':p'=>$this->precio, 
         ':d'=>$this->descripcion, ':u'=>$this->usuario_id,], false);
+    }
+
+    public static function vehiculoPerteneceUsuario(int $id_v, int $id_u){
+        $q = "select id from vehiculo where id=:idv and usuario_id=:idu";
+        $stmt = self::executeQuery($q, [':idv'=>$id_v, ':idu'=>$id_u], true);
+        $dato = $stmt->fetchAll(PDO::FETCH_OBJ);
+        return count($dato);
     }
 
     public static function crearVehiculos(int $cantidad){
@@ -58,6 +65,11 @@ class Vehiculo extends Conexion{
                 ->setUsuarioId($usuario_id)
                 ->create();
         }
+    }
+
+    public static function delete(int $id){
+        $q = "delete from vehiculo where id=:i";
+        self::executeQuery($q, [':i'=>$id]);
     }
 
     public static function deleteAll(){

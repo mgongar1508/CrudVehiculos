@@ -3,7 +3,6 @@
 use App\Bbdd\Usuario;
 use App\Bbdd\Vehiculo;
 use App\Utils\Validacion;
-use Dotenv\Validator;
 
 session_start();
 require __DIR__ . "/../vendor/autoload.php";
