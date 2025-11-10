@@ -12,6 +12,27 @@ if (!isset($_SESSION['email'])) {
 }
 $email = $_SESSION['email'];
 
+$id_vehiculo = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+if(!$id_vehiculo){
+    header("Location:vehiculos.php");
+    exit;
+}
+
+$id_usuario = Usuario::devolverId($email)[0];
+if(!Vehiculo::vehiculoPerteneceUsuario($id_vehiculo, $id_usuario)){
+    $_SESSION['mensaje'] = "ID erronea, no se pudo actualizar";
+    header("Location:vehiculos.php");
+    die();
+}
+
+$vehiculo = Vehiculo::read($id_vehiculo)[0];
+
+$tipos = ['Coche'=> "", 'Moto'=>"", 'Camión'=>"", 'Furgoneta'=>"", 'Otro'=>""];
+foreach($tipos as $k=>$v){
+    $tipos[$k] = $k == $vehiculo->tipo ? "checked" : "";
+}
+
 if(isset($_POST['marca'])){
     $marca = Validacion::sanearCadena($_POST['marca']);
     $modelo = Validacion::sanearCadena($_POST['modelo']);
@@ -31,6 +52,7 @@ if(isset($_POST['marca'])){
 
     if($errores){
         header("Location:{$_SERVER['PHP_SELF']}");
+        die();
     }
 
     (new Vehiculo)
@@ -39,10 +61,9 @@ if(isset($_POST['marca'])){
         ->setTipo($tipo)
         ->setPrecio($precio)
         ->setDescripcion($descripcion)
-        ->setUsuarioId($usuario_id)
-        ->create();
+        ->update($id_vehiculo);
 
-    $_SESSION['mensaje'] = "El vehiculo ha sido creado con exito";
+    $_SESSION['mensaje'] = "El vehiculo ha sido actualizado con exito";
     header("Location:vehiculos.php");
 }
 
@@ -64,15 +85,15 @@ if(isset($_POST['marca'])){
 </head>
 
 <body class="p-8 bg-blue-200">
-    <h3 class="text-center text-xl font-bold mb-2">Crear Vehiculo</h3>
+    <h3 class="text-center text-xl font-bold mb-2">Actualizar Vehiculo</h3>
     <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md space-y-4">
-        <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>">
+        <form method="POST" action="<?= $_SERVER['PHP_SELF']."?id=".$id_vehiculo ?>">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Registro de Vehículo</h2>
 
             <!-- Marca -->
             <div>
                 <label for="marca" class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
-                <input type="text" id="marca" name="marca" placeholder="Ej. Toyota"
+                <input type="text" id="marca" name="marca" value="<?= $vehiculo->marca ?>"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <?php Validacion::pintarErr("err_marca") ?>
@@ -80,7 +101,7 @@ if(isset($_POST['marca'])){
             <!-- Modelo -->
             <div>
                 <label for="modelo" class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
-                <input type="text" id="modelo" name="modelo" placeholder="Ej. Corolla"
+                <input type="text" id="modelo" name="modelo" value="<?= $vehiculo->modelo ?>"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <?php Validacion::pintarErr("err_modelo") ?>
@@ -90,23 +111,23 @@ if(isset($_POST['marca'])){
                 <span class="block text-sm font-medium text-gray-700 mb-1">Tipo de vehículo</span>
                 <div class="flex flex-wrap gap-4">
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="tipo" value="Coche" checked class="text-blue-600 focus:ring-blue-500" />
+                        <input type="radio" name="tipo" value="Coche" <?= $tipos['Coche'] ?>  class="text-blue-600 focus:ring-blue-500" />
                         Coche
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="tipo" value="Moto" class="text-blue-600 focus:ring-blue-500" />
+                        <input type="radio" name="tipo" value="Moto" <?= $tipos['Moto'] ?> class="text-blue-600 focus:ring-blue-500" />
                         Moto
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="tipo" value="Camión" class="text-blue-600 focus:ring-blue-500" />
+                        <input type="radio" name="tipo" value="Camión" <?= $tipos['Camión'] ?> class="text-blue-600 focus:ring-blue-500" />
                         Camión
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="tipo" value="Furgoneta" class="text-blue-600 focus:ring-blue-500" />
+                        <input type="radio" name="tipo" value="Furgoneta" <?= $tipos['Furgoneta'] ?> class="text-blue-600 focus:ring-blue-500" />
                         Furgoneta
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="tipo" value="Otro" class="text-blue-600 focus:ring-blue-500" />
+                        <input type="radio" name="tipo" value="Otro" <?= $tipos['Otro'] ?> class="text-blue-600 focus:ring-blue-500" />
                         Otro
                     </label>
                 </div>
@@ -116,7 +137,7 @@ if(isset($_POST['marca'])){
             <!-- Precio -->
             <div>
                 <label for="precio" class="block text-sm font-medium text-gray-700 mb-1">Precio (€)</label>
-                <input type="number" id="precio" name="precio" min="0" step="0.01" placeholder="Ej. 15000"
+                <input type="number" id="precio" name="precio" min="0" step="0.01" value="<?= $vehiculo->precio ?>"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <?php Validacion::pintarErr("err_precio") ?>
@@ -124,8 +145,8 @@ if(isset($_POST['marca'])){
             <!-- Descripción -->
             <div>
                 <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                <textarea id="descripcion" name="descripcion" rows="4" placeholder="Escribe una breve descripción..."
-                    class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                <textarea id="descripcion" name="descripcion" rows="4"
+                    class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"><?= $vehiculo->descripcion ?></textarea>
             </div>
             <?php Validacion::pintarErr("err_descripcion") ?>
 

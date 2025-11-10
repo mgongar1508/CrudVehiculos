@@ -11,18 +11,20 @@ if(!isset($_SESSION['email'])){
     die();
 }
 
-
 $id_vehiculo = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
-if($id_vehiculo){
-    $id = Usuario::devolverId($_SESSION['email']);
-    $id_usuario = $id[0];
-    if(!Vehiculo::vehiculoPerteneceUsuario($id_vehiculo, $id_usuario)){
+if(!$id_vehiculo){
+    header("Location:vehiculos.php");
+    die(); 
+}
+
+$id = Usuario::devolverId($_SESSION['email']);
+$id_usuario = $id[0];
+if(!Vehiculo::vehiculoPerteneceUsuario($id_vehiculo, $id_usuario)){
         $_SESSION['mensaje'] = "ID erronea, no se pudo borrar";
         header("Location:vehiculos.php");
         die();
     }
-}
 
 Vehiculo::delete($id_vehiculo);
 $_SESSION['mensaje'] = "vehiculo borrado exitosamente";

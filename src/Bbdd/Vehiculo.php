@@ -26,7 +26,7 @@ class Vehiculo extends Conexion{
     }
 
     public static function read(?int $id=null){
-        $q = $id ==null ? "select * from vehiculo order by id desc" : "select * from vehiculos where id=:i";
+        $q = $id ==null ? "select * from vehiculo order by id desc" : "select * from vehiculo where id=:i";
         $parametros = $id==null ? [] : [':i'=>$id];
         $stmt = self::executeQuery($q, $parametros, true);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -35,7 +35,13 @@ class Vehiculo extends Conexion{
     public function create(){
         $q = "insert into vehiculo(marca, modelo, tipo, precio, descripcion, usuario_id) values(:ma, :mo, :t, :p, :d, :u)";
         self::executeQuery($q, [':ma'=>$this->marca, ':mo'=>$this->modelo, ':t'=>$this->tipo, ':p'=>$this->precio, 
-        ':d'=>$this->descripcion, ':u'=>$this->usuario_id,], false);
+        ':d'=>$this->descripcion, ':u'=>$this->usuario_id,]);
+    }
+
+    public function update(int $id){
+        $q = "update vehiculo set marca=:ma, modelo=:mo, tipo=:t, precio=:p, descripcion=:d where id=:i";
+        self::executeQuery($q, [':ma'=>$this->marca, ':mo'=>$this->modelo, ':t'=>$this->tipo, ':p'=>$this->precio, 
+        ':d'=>$this->descripcion, ':i'=>$id]);
     }
 
     public static function vehiculoPerteneceUsuario(int $id_v, int $id_u){
